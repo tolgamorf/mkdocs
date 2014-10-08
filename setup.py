@@ -16,11 +16,12 @@ author = 'Tom Christie'
 author_email = 'tom@tomchristie.com'
 license = 'BSD'
 install_requires = [
+    'click==3.3',
+    'ghp-import==0.4.1',
     'Jinja2==2.7.1',
     'Markdown==2.3.1',
     'PyYAML==3.10',
     'watchdog==0.7.0',
-    'ghp-import==0.4.1'
 ]
 
 long_description = """Work in progress."""
@@ -82,7 +83,7 @@ setup(
     install_requires=install_requires,
     entry_points={
         'console_scripts': [
-            'mkdocs = mkdocs.main:run_main',
+            'mkdocs = mkdocs.main:cli',
             ],
         },
     classifiers=[

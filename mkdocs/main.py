@@ -1,58 +1,53 @@
 #!/usr/bin/env python
 # coding: utf-8
-from __future__ import print_function
-
+import click
 from mkdocs.build import build
 from mkdocs.config import load_config
 from mkdocs.gh_deploy import gh_deploy
 from mkdocs.new import new
 from mkdocs.serve import serve
-import sys
 
 
-def arg_to_option(arg):
-    """
-    Convert command line arguments into two-tuples of config key/value pairs.
-    """
-    arg = arg.lstrip('--').replace('-', '_')
-    if '=' in arg:
-        return arg.split('=', 1)
-    return (arg, True)
+@click.group()
+@click.option('--verbose', is_flag=True)
+@click.option('--config-file', default='mkdocs.yml', type=click.Path(exists=True))
+@click.pass_context
+def cli(ctx, verbose, config_file):
+    ctx.config = load_config(filename=config_file, options={
+        'VERBOSE': verbose
+    })
 
 
-def main(cmd, args, options=None):
-    """
-    Build the documentation, and optionally start the devserver.
-    """
-    if cmd == 'serve':
-        config = load_config(options=options)
-        serve(config, options=options)
-    elif cmd == 'build':
-        config = load_config(options=options)
-        build(config)
-    elif cmd == 'json':
-        config = load_config(options=options)
-        build(config, dump_json=True)
-    elif cmd == 'gh-deploy':
-        config = load_config(options=options)
-        build(config)
-        gh_deploy(config)
-    elif cmd == 'new':
-        new(args, options)
-    else:
-        print('mkdocs [help|new|build|serve|gh-deploy|json] {options}')
+@cli.command(name='serve')
+@click.pass_context
+def serve_command(ctx):
+    serve(ctx.config)
 
 
-def run_main():
-    """
-    Invokes main() with the contents of sys.argv
+@cli.command(name='build')
+@click.pass_context
+def build_command(ctx):
+    print ctx
+    build(ctx.config)
 
-    This is a separate function so it can be invoked
-    by a setuptools console_script.
-    """
-    cmd = sys.argv[1] if len(sys.argv) >= 2 else None
-    opts = [arg_to_option(arg) for arg in sys.argv[2:] if arg.startswith('--')]
-    main(cmd, args=sys.argv[2:], options=dict(opts))
+
+@cli.command(name='json')
+@click.pass_context
+def json_command(ctx):
+    print ctx
+    build(ctx.config, dump_json=True)
+
+
+@cli.command(name='gh-deploy')
+@click.pass_context
+def gh_deploy_command(ctx):
+    gh_deploy(ctx.config)
+
+
+@cli.command(name='new')
+@click.argument('directory-name')
+def new_command(directory_name):
+    new(directory_name)
 
 if __name__ == '__main__':
-    run_main()
+    cli()

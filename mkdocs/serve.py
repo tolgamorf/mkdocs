@@ -65,25 +65,24 @@ class FixedDirectoryHandler(httpserver.SimpleHTTPRequestHandler):
         sys.stderr.write('[%s] %s\n' % (date_str, format % args))
 
 
-def serve(config, options=None):
+def serve(config):
     """
     Start the devserver, and rebuild the docs whenever any changes take effect.
     """
     # Create a temporary build directory, and set some options to serve it
     tempdir = tempfile.mkdtemp()
-    options['site_dir'] = tempdir
+    config['site_dir'] = tempdir
 
     # Only use user-friendly URLs when running the live server
-    options['use_directory_urls'] = True
+    config['use_directory_urls'] = True
 
     # Perform the initial build
-    config = load_config(options=options)
     build(config, live_server=True)
 
     # Note: We pass any command-line options through so that we
     #       can re-apply them if the config file is reloaded.
-    event_handler = BuildEventHandler(options)
-    config_event_handler = ConfigEventHandler(options)
+    event_handler = BuildEventHandler(config)
+    config_event_handler = ConfigEventHandler(config)
     observer = observers.Observer()
     observer.schedule(event_handler, config['docs_dir'], recursive=True)
     for theme_dir in config['theme_dir']:
