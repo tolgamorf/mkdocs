@@ -151,7 +151,7 @@ Specify alignment for each column by adding colons to separator lines:
 
 #### Fenced code blocks
 
-Start with a line containing 3 or more backtick \` characters, and ends with the first line with the same number of backticks \`:
+Start with a line containing 3 or more backtick \` characters, and ends with a newline containing the same number of backticks \`:
 
     ```
     Fenced code blocks are like Stardard
@@ -161,11 +161,9 @@ Start with a line containing 3 or more backtick \` characters, and ends with the
     block.
     ```
 
-<!--
-#### Admonitions
+The starting line can also include the language of the code block:
 
-Ad est nibh suscipiantur. Quaeque deleniti delectus an has, tempor accusamus eu vix. Et democritum expetendis nam, putent fuisset duo ea, elaboraret efficiendi no vis.
-
-    !!! danger "Don't try this at home"
-        May cause grevious bodily harm
--->
+    ```python
+    def hello():
+        print "Hello world"
+    ```
